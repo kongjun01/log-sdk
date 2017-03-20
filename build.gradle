@@ -1,0 +1,63 @@
+group 'cn.com.duiba.tuia'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: org.springframework.boot.gradle.plugin.SpringBootPlugin
+// java编译的时候缺省状态下会因为中文字符而失败
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+//参见Part 2， 为项目生成**.jar/**-javadoc.jar/**-sources.jar
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+buildscript {
+
+    repositories {
+        mavenLocal()
+        maven{ url 'http://nexus.dui88.com:8081/nexus/content/groups/public/'}
+        maven{ url 'http://nexus.dui88.com:8081/nexus/content/repositories/snapshots'}
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE'
+    }
+}
+
+artifacts { archives sourcesJar }
+
+repositories {
+    mavenLocal()
+    maven{ url 'http://nexus.dui88.com:8081/nexus/content/groups/public/'}
+    maven{ url 'http://nexus.dui88.com:8081/nexus/content/repositories/snapshots'}
+}
+
+dependencies {
+
+    compile("org.springframework.boot:spring-boot-starter-aop")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+
+
+
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://nexus.dui88.com:8081/nexus/content/repositories/snapshots/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+
+            repository(url: "http://nexus.dui88.com:8081/nexus/content/repositories/releases/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+
+            pom.project {
+                name project.name
+                packaging 'jar'
+                description 'log sdk'
+            }
+        }
+    }
+}
