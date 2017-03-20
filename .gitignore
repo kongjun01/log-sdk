@@ -94,4 +94,6 @@ buildNumber.properties
 
 .idea
 settings.gradle
+.gradle
+build
 
