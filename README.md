@@ -10,6 +10,7 @@ dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
 ```
 ##### 加入mybaits的插件,有两种方式
 - 在sqlSessionFactory加入LogMybatisPlugin
+
 ```xml
 <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
     <property name="dataSource" ref="dataSource"></property>
@@ -23,7 +24,9 @@ dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
     </property>
 </bean>
 ```
+
 - 如果有多个sqlSessionFactory，可以在sqlMapConfig.xml声明，这样所有sqlSessionFactory都会加载LogMybatisPlugin
+
 ```xml
 <configuration>
 	<settings></settings>
@@ -35,6 +38,7 @@ dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
 ```
 ### @Log注解 使用方法
 TestController有个方法doMethod：
+
 ```java
 @Log(platform = PlatformEnum.manager,moduleName = "广告管理",subModuleName="限流媒体",optionName="删除限流媒体")
 public void doMethod(Request req, HttpServletResponse response) {
@@ -42,7 +46,8 @@ public void doMethod(Request req, HttpServletResponse response) {
 }
 ```
 
-TestService里面有个doOther：  
+TestService里面有个doOther： 
+ 
 ```java
 @Log(platform = PlatformEnum.manager,moduleName = "广告管理2",subModuleName="限流媒体2",optionName="删除限流媒体服务")
 public void doMethod() {
@@ -51,6 +56,7 @@ public void doMethod() {
 ```
 
 *注解可以嵌套调用，除了optionName属性会在嵌套中叠加，其它默认取的是最外面的配置。比如上面的配置最后日志打印的结果是：*  
+
 ```json
 {
    "platform":"广告管理后台",
