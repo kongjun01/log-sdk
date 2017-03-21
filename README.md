@@ -1,5 +1,4 @@
-## 日志接入文档
-### 接入步骤
+## 接入步骤
 ##### 1. 加入依赖
 ```groovy
 dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
@@ -36,7 +35,7 @@ dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
 	</plugins>
 </configuration>
 ```
-### @Log注解 使用方法
+## @Log注解 使用方法
 TestController有个方法doMethod：
 
 ```java
@@ -67,19 +66,19 @@ public void doMethod() {
 }
 ```
   
-### @Log注解参数说明  
+## @Log注解参数说明  
 1. platform ：系统名称 详细见PlatformEnum枚举
 2. moduleName ： 模块名称
 3. subModuleName : 子木块名称
 4. optionName ： 操作
 
-### 其它说明
+## 其它说明
 - 打印日志如果出现异常不会影响业务罗杰的输出
 - 如果不是web项目不会记录url和IP的数据
 - 如果是web项目记录请求参数时，打印会过滤掉ServletResponse，是为了防止影响业务正常输出
 
 
-### 注意事项
+## 注意事项
 
 - 如果在DAO方法上加@Log注解，只会修改optionName的内容,所以最好不要加
 - 目前LogMybatisPlugin只会记录update和delte操作的数据
