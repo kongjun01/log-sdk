@@ -59,9 +59,15 @@ public void doMethod() {
    "optionName":"删除限流媒体:删除限流媒体服务",
    ....
 }
-```  
+```
+  
+### @Log注解参数说明  
+1. platform ：系统名称 详细见PlatformEnum枚举
+2. moduleName ： 模块名称
+3. subModuleName : 子木块名称
+4. optionName ： 操作
 
-### 说明
+### 其它说明
 - 打印日志如果出现异常不会影响业务罗杰的输出
 - 如果不是web项目不会记录url和IP的数据
 - 如果是web项目记录请求参数时，打印会过滤掉ServletResponse，是为了防止影响业务正常输出
