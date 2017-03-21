@@ -28,7 +28,7 @@ public class LogDTO {
 
     private String originContent;
 
-    private String opeartionContent;
+    private String operationContent;
 
     public String getPlatform() {
         return platform;
@@ -102,11 +102,11 @@ public class LogDTO {
         this.originContent = originContent;
     }
 
-    public String getOpeartionContent() {
-        return opeartionContent;
+    public String getOperationContent() {
+        return operationContent;
     }
 
-    public void setOpeartionContent(String opeartionContent) {
-        this.opeartionContent = opeartionContent;
+    public void setOperationContent(String operationContent) {
+        this.operationContent = operationContent;
     }
 }

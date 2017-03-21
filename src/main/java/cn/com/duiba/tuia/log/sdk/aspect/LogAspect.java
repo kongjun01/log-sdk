@@ -5,19 +5,24 @@ import cn.com.duiba.tuia.log.sdk.cache.CacheKey;
 import cn.com.duiba.tuia.log.sdk.cache.ThreadLocalCache;
 import cn.com.duiba.tuia.log.sdk.dto.LogDTO;
 import com.alibaba.fastjson.JSON;
-import org.aspectj.lang.JoinPoint;
+import com.alibaba.fastjson.JSONObject;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
 
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: <a href="http://www.panaihua.com">panaihua</a>
@@ -27,7 +32,7 @@ import java.util.Date;
  */
 @Order(1)
 @Aspect
-public class LogAspect{
+public class LogAspect {
 
     private final String OPTION_JOIN_STR = ":";
 
@@ -36,54 +41,89 @@ public class LogAspect{
     @Autowired(required = false)
     private HttpServletRequest request;
 
-    @Pointcut("@annotation(cn.com.duiba.tuia.log.sdk.annotation.Log)")
-    public void doing() {}
-
-
-    @Before("doing()")
-    public void doBefore(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("@annotation(cn.com.duiba.tuia.log.sdk.annotation.Log)")
+    public Object doing(ProceedingJoinPoint joinPoint) throws Throwable {
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
+
+        try {
+
+            this.doBefore(joinPoint, method);
+        } catch (Throwable throwable) {
+            logger.error("打印日志切面之前异常", throwable);
+        }
+
+        Object result = joinPoint.proceed();
+
+        try {
+            this.doAfterReturning(method);
+        } catch (Throwable throwable) {
+            logger.error("打印日志切面之后异常", throwable);
+        }
+
+        return result;
+    }
+
+    public void doBefore(ProceedingJoinPoint joinPoint, Method method) throws Throwable {
+
         Log log = method.getAnnotation(Log.class);
-
         LogDTO logDTO = this.setLogDTO(log);
-        this.setOpeartionContent(logDTO,joinPoint.getArgs());
-        this.setFirstName(method);
+        this.setOpeartionContent(logDTO, joinPoint.getArgs());
         this.initRequest(logDTO);
+        this.setFirstName(method);
     }
 
-    @AfterReturning(returning = "result", pointcut = "doing()")
-    public void doAfterReturning(Object result) throws Throwable {
+    public void doAfterReturning(Method method) throws Throwable {
 
+        String methodName = method.getClass().getName() + method.getName();
+        //如果执行到最后一个方法则打印日志
+        if (methodName.equals(ThreadLocalCache.get(CacheKey.FIRST_METHOD))) {
+
+            LogDTO logDTO = (LogDTO) ThreadLocalCache.get(CacheKey.LOG_KEY);
+            logDTO.setOriginContent(JSON.toJSONString(ThreadLocalCache.get(CacheKey.ORIGIN_KEY)));
+            logger.info(JSONObject.toJSONString(logDTO));
+        }
     }
 
-    @AfterThrowing(pointcut = "doing()", throwing = "throwable")
+    /*@AfterThrowing(pointcut = "doing()", throwing = "throwable")
     public void doAfterThrowing(JoinPoint joinPoint, Throwable throwable) {
         logger.error("写日志异常",throwable);
-    }
+    }*/
 
     /**
      * 设置请求参数,只在第一次
+     *
      * @param logDTO
      */
-    private void setOpeartionContent(LogDTO logDTO,Object[] args){
+    private void setOpeartionContent(LogDTO logDTO, Object[] args) {
 
-        if(args == null || ThreadLocalCache.isKeyExist(CacheKey.FIRST_CLASS)){
+        if (args == null || ThreadLocalCache.isKeyExist(CacheKey.FIRST_METHOD)) {
             return;
         }
 
-        logDTO.setOpeartionContent(JSON.toJSONString(args));
+        List<Object> operationArgs = new ArrayList(args.length);
+        for (int i = 0, len = args.length; i < len; i++) {
+            if (args[i] instanceof ServletResponse || args[i] instanceof Errors) {
+                continue;
+            }
+
+            operationArgs.add(args[i]);
+
+        }
+
+        logDTO.setOperationContent(JSON.toJSONString(JSON.toJSON(operationArgs)));
     }
 
     /**
      * 初始化url和ip,如果不是web请求直接忽略
+     *
      * @param logDTO
      */
-    private void initRequest(LogDTO logDTO){
+    private void initRequest(LogDTO logDTO) {
 
         //如果不是request请求直接忽略
-        if(request == null || ThreadLocalCache.isKeyExist(CacheKey.FIRST_CLASS)){
+        if (request == null || ThreadLocalCache.isKeyExist(CacheKey.FIRST_METHOD)) {
             return;
         }
 
@@ -94,18 +134,20 @@ public class LogAspect{
     /**
      * 设置第一个类
      * <p>用来判断是否闭环</p>
+     *
      * @param method
      */
-    private void setFirstName(Method method){
+    private void setFirstName(Method method) {
 
-        String className = method.getClass().toString();
-        if(!ThreadLocalCache.isKeyExist(className)){
-            ThreadLocalCache.put(CacheKey.FIRST_CLASS,className);
+        String methodName = method.getClass().getName() + method.getName();
+        if (!ThreadLocalCache.isKeyExist(methodName)) {
+            ThreadLocalCache.put(CacheKey.FIRST_METHOD, methodName);
         }
     }
 
     /**
      * 设置日志DTO
+     *
      * @param log
      * @return
      */
@@ -129,13 +171,16 @@ public class LogAspect{
             logDTO.setTimestamp(new Date());
         }
 
-        if(StringUtils.hasLength(log.optionName())){
+        if (StringUtils.hasLength(log.optionName())) {
             StringBuffer logOption = new StringBuffer();
-            logOption.append(logDTO.getOptionName()).append(OPTION_JOIN_STR).append(log.optionName());
+            if(StringUtils.hasLength(logDTO.getOptionName())){
+                logOption.append(logDTO.getOptionName());
+            }
+            logOption.append(OPTION_JOIN_STR).append(log.optionName());
             logDTO.setOptionName(logOption.toString());
         }
 
-        ThreadLocalCache.put(CacheKey.LOG_KEY,logDTO);
+        ThreadLocalCache.put(CacheKey.LOG_KEY, logDTO);
 
         return logDTO;
     }

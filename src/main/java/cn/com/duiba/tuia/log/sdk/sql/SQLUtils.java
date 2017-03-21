@@ -31,7 +31,7 @@ public class SQLUtils {
      * @return
      */
     public static String getSelectByDel(String sql){
-        return sql.startsWith("delete") ? sql.replace("delete", "select") : sql.replace("DELETE", "select");
+        return sql.startsWith("delete") ? sql.replace("delete", "select * ") : sql.replace("DELETE", "select * ");
     }
 
     /**
@@ -40,7 +40,11 @@ public class SQLUtils {
      * @return
      */
     public static boolean isInsertSql(String sql){
-        return sql.startsWith("insert") || !sql.startsWith("INSERT");
+        return sql.startsWith("insert") || sql.startsWith("INSERT");
+    }
+
+    public static void main(String args[]){
+        System.out.println(isInsertSql("delete from aaa"));
     }
 
     /**

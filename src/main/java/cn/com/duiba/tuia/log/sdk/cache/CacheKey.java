@@ -16,7 +16,7 @@ public interface CacheKey {
     /**
      * 第一个执行的类名
      */
-    String FIRST_CLASS = "first.class";
+    String FIRST_METHOD = "first.method";
 
     String ORIGIN_KEY = "origin.key";
 }

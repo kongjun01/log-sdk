@@ -44,11 +44,15 @@ public class LogMybatisPlugin implements Interceptor {
             }
             //得到执行的sql
             String executeSql = this.getExecuteSql(mappedStatement.getConfiguration(), mappedStatement.getBoundSql(parameter));
-            //得到查询的sql语句
-            String selectSql = this.getSelectSql(executeSql);
-            Executor executor = (Executor) invocation.getTarget();
-            List<Map<String, Object>> resultList = SQLHelp.executeSQL(executor.getTransaction(), selectSql);
-            this.setOrigin(resultList);
+            executeSql = executeSql.trim();
+            if(!SQLUtils.isInsertSql(executeSql)){
+                //得到查询的sql语句
+                String selectSql = this.getSelectSql(executeSql);
+                Executor executor = (Executor) invocation.getTarget();
+                List<Map<String, Object>> resultList = SQLHelp.executeSQL(executor.getTransaction(), selectSql);
+                this.setOrigin(resultList);
+            }
+
         } catch (Exception e) {
             //捕捉异常，不影响业务流程
             logger.error("获取sql语句错误", e);
@@ -87,8 +91,8 @@ public class LogMybatisPlugin implements Interceptor {
             sql = SQLUtils.getSelectByUpdate(sql);
         }
 
-        if (SQLUtils.isUpdateSql(sql)) {
-            sql = SQLUtils.getSelectByUpdate(sql);
+        if (SQLUtils.isDeleteSql(sql)) {
+            sql = SQLUtils.getSelectByDel(sql);
         }
 
         return sql;
