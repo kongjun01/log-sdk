@@ -1,14 +1,14 @@
 ## 日志接入文档
 ### 接入步骤
-##### 加入依赖
+##### 1. 加入依赖
 ```groovy
 dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
 ```
-##### 在spring容器中声明bean
+##### 2. 在spring容器中声明bean
 ```xml
 <bean class="cn.com.duiba.tuia.log.sdk.aspect.LogAspect"></bean>
 ```
-##### 加入mybaits的插件,有两种方式
+##### 3. 加入mybaits的插件,有两种方式
 - 在sqlSessionFactory加入LogMybatisPlugin
 
 ```xml
