@@ -19,19 +19,19 @@ public @interface Log {
      * 系统名称
      * @return
      */
-    PlatformEnum platform();
+    PlatformEnum platform() default PlatformEnum.manager;
 
     /**
      * 模块名称
      * @return
      */
-    String moduleName();
+    String moduleName() default "";
 
     /**
      * 子模块名称
      * @return
      */
-    String subModuleName();
+    String subModuleName() default "";
 
     /**
      * 操作描述
