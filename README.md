@@ -35,6 +35,11 @@ dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
 	</plugins>
 </configuration>
 ```
+##### 4. 增加logback
+```xml
+<include resource="logsdk/log-sdk.xml" />
+```
+
 ## @Log注解 使用方法
 TestController有个方法doMethod：
 
