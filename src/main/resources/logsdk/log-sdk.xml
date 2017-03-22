@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+    <appender name="log.sdk" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <Encoding>UTF-8</Encoding>
+        <File>${logging.path}/log-sdk.info.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logging.path}/log-sdk.info.log.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <logger name="cn.com.duiba.tuia.log.sdk.SdkInfoLog" additivity="false" level="INFO">
+        <appender-ref ref="log.sdk"/>
+    </logger>
+
+</included>
