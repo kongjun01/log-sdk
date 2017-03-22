@@ -5,7 +5,6 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
-        <Encoding>UTF-8</Encoding>
         <File>${logging.path}/log-sdk.info.log</File>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

@@ -4,6 +4,7 @@ import cn.com.duiba.tuia.log.sdk.SdkInfoLog;
 import cn.com.duiba.tuia.log.sdk.annotation.Log;
 import cn.com.duiba.tuia.log.sdk.cache.CacheKey;
 import cn.com.duiba.tuia.log.sdk.cache.ThreadLocalCache;
+import cn.com.duiba.tuia.log.sdk.constant.CookieKey;
 import cn.com.duiba.tuia.log.sdk.dto.LogDTO;
 import cn.com.duiba.tuia.log.sdk.tool.CookieUtils;
 import com.alibaba.fastjson.JSON;
@@ -130,7 +131,7 @@ public class LogAspect {
 
         logDTO.setUri(request.getRequestURI());
         logDTO.setIp(getIpAddr(request));
-        logDTO.setAccountId(CookieUtils.getAccountId(request));
+        logDTO.setAccountInfo(CookieUtils.getCookie(request,CookieKey.ACCOUNT_KEY));
     }
 
     /**

@@ -58,7 +58,7 @@ public class CookieUtils {
      * @param key 键
      * @return cookie中对应的值
      */
-    private static String getCookie(HttpServletRequest request,String key) {
+    public static String getCookie(HttpServletRequest request,String key) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {

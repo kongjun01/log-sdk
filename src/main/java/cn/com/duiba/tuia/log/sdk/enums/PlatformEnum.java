@@ -10,7 +10,9 @@ public enum PlatformEnum {
 
     manager("广告管理后台"),
 
-    adver("广告代理商后台");
+    adver("广告代理商后台"),
+
+    tuiaCore("广告核心木块");
 
     private String name;
 

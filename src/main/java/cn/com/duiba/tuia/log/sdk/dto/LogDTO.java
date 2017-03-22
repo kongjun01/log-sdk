@@ -12,7 +12,7 @@ public class LogDTO {
 
     private String platform;
 
-    private Long accountId;
+    private String accountInfo;
 
     private Date timestamp;
 
@@ -38,12 +38,12 @@ public class LogDTO {
         this.platform = platform;
     }
 
-    public Long getAccountId() {
-        return accountId;
+    public String getAccountInfo() {
+        return accountInfo;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setAccountInfo(String accountInfo) {
+        this.accountInfo = accountInfo;
     }
 
     public Date getTimestamp() {
