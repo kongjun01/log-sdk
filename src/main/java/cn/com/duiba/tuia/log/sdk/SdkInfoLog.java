@@ -16,6 +16,6 @@ public class SdkInfoLog {
     private  static Logger log = LoggerFactory.getLogger(SdkInfoLog.class);
 
     public static void log(LogDTO logDTO) {
-        log.info(JSONObject.toJSONString(logDTO));
+        log.info(JSONObject.toJSONStringWithDateFormat(logDTO,"yyyy-MM-dd HH:mm:ss"));
     }
 }
