@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -85,6 +86,7 @@ public class LogAspect {
             LogDTO logDTO = (LogDTO) ThreadLocalCache.get(CacheKey.LOG_KEY);
             logDTO.setOriginContent(JSON.toJSONString(ThreadLocalCache.get(CacheKey.ORIGIN_KEY)));
             SdkInfoLog.log(logDTO);
+            ThreadLocalCache.clear();
         }
     }
 
@@ -125,7 +127,7 @@ public class LogAspect {
     private void initRequest(LogDTO logDTO) {
 
         //如果不是request请求直接忽略
-        if (request == null || ThreadLocalCache.isKeyExist(CacheKey.FIRST_METHOD)) {
+        if (RequestContextHolder.getRequestAttributes() == null || ThreadLocalCache.isKeyExist(CacheKey.FIRST_METHOD)) {
             return;
         }
 
