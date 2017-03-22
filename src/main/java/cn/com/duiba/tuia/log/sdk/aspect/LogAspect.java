@@ -5,6 +5,7 @@ import cn.com.duiba.tuia.log.sdk.annotation.Log;
 import cn.com.duiba.tuia.log.sdk.cache.CacheKey;
 import cn.com.duiba.tuia.log.sdk.cache.ThreadLocalCache;
 import cn.com.duiba.tuia.log.sdk.dto.LogDTO;
+import cn.com.duiba.tuia.log.sdk.tool.CookieUtils;
 import com.alibaba.fastjson.JSON;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -129,6 +130,7 @@ public class LogAspect {
 
         logDTO.setUri(request.getRequestURI());
         logDTO.setIp(getIpAddr(request));
+        logDTO.setAccountId(CookieUtils.getAccountId(request));
     }
 
     /**
