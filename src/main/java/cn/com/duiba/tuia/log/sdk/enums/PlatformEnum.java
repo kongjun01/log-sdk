@@ -8,17 +8,11 @@ package cn.com.duiba.tuia.log.sdk.enums;
  */
 public enum PlatformEnum {
 
-    manager("广告管理后台"),
+    manager,
 
-    adver("广告代理商后台"),
+    adver,
 
-    tuiaCore("广告核心木块");
-
-    private String name;
-
-    PlatformEnum(String name){
-        this.name = name;
-    }
+    tuiaCore;
 
     @Override
     public String toString() {
