@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cn.com.duiba.tuia.log.sdk.autoconfigure.LogAutoConfiguration
+cn.com.duiba.tuia.log.sdk.autoconfigure.LogAutoConfiguration,\
+cn.com.duiba.tuia.log.sdk.autoconfigure.LogbackAutoConfiguration

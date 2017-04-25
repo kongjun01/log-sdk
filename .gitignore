@@ -93,7 +93,6 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 
 .idea
-settings.gradle
 .gradle
 build
 
