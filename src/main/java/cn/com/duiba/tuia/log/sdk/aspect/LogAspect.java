@@ -108,7 +108,7 @@ public class LogAspect {
 
         List<Object> operationArgs = new ArrayList(args.length);
         for (int i = 0, len = args.length; i < len; i++) {
-            if (args[i] instanceof ServletResponse || args[i] instanceof Errors) {
+            if (args[i] instanceof ServletResponse || args[i] instanceof Errors || args[i] instanceof HttpServletRequest) {
                 continue;
             }
 
