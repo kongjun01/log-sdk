@@ -1,43 +1,8 @@
-## 接入步骤
-##### 1. 加入依赖
+## 接入方法
+加入sdk的依赖就可以了
+
 ```groovy
-dependency('cn.com.duiba.tuia:log-sdk:1.0-SNAPSHOT')
-```
-##### 2. 在spring容器中声明bean
-```xml
-<bean class="cn.com.duiba.tuia.log.sdk.aspect.LogAspect"></bean>
-```
-##### 3. 加入mybaits的插件,有两种方式
-- 在sqlSessionFactory加入LogMybatisPlugin
-
-```xml
-<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-    <property name="dataSource" ref="dataSource"></property>
-    <property name="configLocation" value="classpath:mybatis/sqlMapConfig.xml"></property>
-    <property name="mapperLocations" value="classpath:mybatis/mapper/*/*.xml"></property>
-    <property name="typeAliasesPackage" value="cn.com.duiba.tuia.manager.dao.*"></property>
-    <property name="plugins">
-        <array>
-            <bean class="cn.com.duiba.tuia.log.sdk.mybatis.plugin.LogMybatisPlugin" />
-        </array>
-    </property>
-</bean>
-```
-
-- 如果有多个sqlSessionFactory，可以在sqlMapConfig.xml声明，这样所有sqlSessionFactory都会加载LogMybatisPlugin
-
-```xml
-<configuration>
-	<settings></settings>
-	<typeAliases></typeAliases>
-	<plugins>
-		<plugin interceptor="cn.com.duiba.tuia.log.sdk.mybatis.plugin.LogMybatisPlugin"></plugin>
-	</plugins>
-</configuration>
-```
-##### 4. 增加logback
-```xml
-<include resource="logsdk/log-sdk.xml" />
+dependency('cn.com.duiba.tuia:log-sdk:1.2-SNAPSHOT')
 ```
 
 ## @Log注解 使用方法
