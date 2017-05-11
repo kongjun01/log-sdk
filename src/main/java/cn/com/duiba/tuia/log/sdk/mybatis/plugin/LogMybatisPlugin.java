@@ -35,6 +35,7 @@ public class LogMybatisPlugin implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
 
+        String selectSql = null;
         try {
 
             MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[MAPPED_STATEMENT_INDEX];
@@ -45,9 +46,9 @@ public class LogMybatisPlugin implements Interceptor {
             //得到执行的sql
             String executeSql = this.getExecuteSql(mappedStatement.getConfiguration(), mappedStatement.getBoundSql(parameter));
             executeSql = executeSql.trim();
-            if(!SQLUtils.isInsertSql(executeSql)){
+            if (!SQLUtils.isInsertSql(executeSql)) {
                 //得到查询的sql语句
-                String selectSql = this.getSelectSql(executeSql);
+                selectSql = this.getSelectSql(executeSql);
                 Executor executor = (Executor) invocation.getTarget();
                 List<Map<String, Object>> resultList = SQLHelp.executeSQL(executor.getTransaction(), selectSql);
                 this.setOrigin(resultList);
@@ -55,7 +56,7 @@ public class LogMybatisPlugin implements Interceptor {
 
         } catch (Exception e) {
             //捕捉异常，不影响业务流程
-            logger.error("获取sql语句错误", e);
+            logger.error("获取sql语句错误，需要执行的sql:{}", selectSql, e);
         }
 
         Object returnObj = invocation.proceed();
