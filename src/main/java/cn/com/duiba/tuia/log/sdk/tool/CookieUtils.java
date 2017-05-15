@@ -4,10 +4,11 @@ import cn.com.duiba.tuia.log.sdk.constant.CookieKey;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 
 /**
  * @author: <a href="http://www.panaihua.com">panaihua</a>
@@ -17,11 +18,7 @@ import java.util.Date;
  */
 public class CookieUtils {
 
-    /**
-     * The time out set.
-     */
-    private static final Long COOKIE_TIMEOUT = 24 * 60 * 60 * 1000L;
-
+    private final static Logger logger = LoggerFactory.getLogger(CookieUtils.class);
 
     /**
      * 从Cookie中获取用户ID.<br>
@@ -31,23 +28,25 @@ public class CookieUtils {
     public static Long getAccountId(HttpServletRequest request) {
 
         // 获取账号信息
-        String accound = getCookie(request,CookieKey.ACCOUNT_KEY);
+        Long accoutId = -1L;
+        String accound = getCookie(request, CookieKey.ACCOUNT_KEY);
         if (StringUtils.isBlank(accound)) {
-            return null;
+            return accoutId;
         }
 
         String content = SecureTool.decryptConsumerCookie(accound);
         if (StringUtils.isBlank(content)) {
-            return null;
+            return accoutId;
         }
 
         JSONObject json = JSON.parseObject(content);
-        if (new Date().getTime() - json.getLong(CookieKey.LOGIN_TIME_KEY) < COOKIE_TIMEOUT) {
-            // 24小时过期
-            return json.getLong(CookieKey.ACCOUNT_ID_KEY);
+        try {
+            accoutId = json.getLong(CookieKey.ACCOUNT_ID_KEY);
+        } catch (Exception e) {
+            logger.error("获取账户id异常", e);
         }
 
-        return null;
+        return accoutId;
     }
 
     /**
@@ -55,10 +54,10 @@ public class CookieUtils {
      * 如果cookie为空或者不存在改key则返回null<br>
      *
      * @param request
-     * @param key 键
+     * @param key     键
      * @return cookie中对应的值
      */
-    public static String getCookie(HttpServletRequest request,String key) {
+    public static String getCookie(HttpServletRequest request, String key) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
