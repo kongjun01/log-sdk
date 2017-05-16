@@ -14,6 +14,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -42,6 +43,9 @@ public class LogAspect {
 
     @Autowired(required = false)
     private HttpServletRequest request;
+
+    @Value("${manager.account.encrypt.key}")
+    private String managerAccountEncryptKey;
 
     @Around("@annotation(cn.com.duiba.tuia.log.sdk.annotation.Log)")
     public Object doing(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -132,7 +136,7 @@ public class LogAspect {
 
         logDTO.setUri(request.getRequestURI());
         logDTO.setIp(getIpAddr(request));
-        logDTO.setAccountId(CookieUtils.getAccountId(request));
+        logDTO.setAccountId(CookieUtils.getAccountId(request,managerAccountEncryptKey));
     }
 
     /**
@@ -208,5 +212,4 @@ public class LogAspect {
         }
         return ip;
     }
-
 }

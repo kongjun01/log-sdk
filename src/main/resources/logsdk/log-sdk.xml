@@ -14,7 +14,7 @@
             <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logging.path}/log-sdk.info.log.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${logging.path}/log-sdk.log.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
     </appender>

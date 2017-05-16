@@ -25,7 +25,7 @@ public class CookieUtils {
      *
      * @return the cid
      */
-    public static Long getAccountId(HttpServletRequest request) {
+    public static Long getAccountId(HttpServletRequest request,String managerAccountEncryptKey) {
 
         // 获取账号信息
         Long accoutId = -1L;
@@ -34,7 +34,7 @@ public class CookieUtils {
             return accoutId;
         }
 
-        String content = SecureTool.decryptConsumerCookie(accound);
+        String content = SecureTool.decryptConsumerCookie(accound,managerAccountEncryptKey);
         if (StringUtils.isBlank(content)) {
             return accoutId;
         }
