@@ -44,7 +44,7 @@ public class LogAspect {
     @Autowired(required = false)
     private HttpServletRequest request;
 
-    @Value("${manager.account.encrypt.key}")
+    @Value("${manager.account.encrypt.key:\"\"}")
     private String managerAccountEncryptKey;
 
     @Around("@annotation(cn.com.duiba.tuia.log.sdk.annotation.Log)")
