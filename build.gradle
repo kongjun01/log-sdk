@@ -1,5 +1,5 @@
 group 'cn.com.duiba.tuia'
-version '1.4.1.RELEASE'
+version '1.4.2-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -71,9 +71,9 @@ uploadArchives {
                 authentication(userName: "admin", password: "admin123")
             }
 
-            repository(url: "http://nexus.dui88.com:8081/nexus/content/repositories/releases/") {
+            /*repository(url: "http://nexus.dui88.com:8081/nexus/content/repositories/releases/") {
                 authentication(userName: "admin", password: "admin123")
-            }
+            }*/
 
             pom.project {
                 name project.name

@@ -20,21 +20,13 @@ public class SQLUtils {
      * @param sql
      * @return
      */
-    public static String getSelectByUpdate(String sql) {
+    public static String getSelectByUpdate(String sql,String fileds) {
 
         int set_position = getSetPosition(sql);
         int where_position = getWherePosition(sql);
         StringBuffer sqlBuffer = new StringBuffer("select ");
-        String setStrs = sql.substring(set_position + 3,where_position);
-        List<String> strings = Splitter.on(",").splitToList(setStrs);
-        List<String> fileds = Lists.newArrayListWithCapacity(strings.size());
-        for (String s : strings){
-            String filed = Splitter.on("=").splitToList(s).get(0);
-            fileds.add(filed);
-        }
-
         String tableName = sql.substring(getUpdatePosition(sql) + 6,set_position -1);
-        sqlBuffer.append(Joiner.on(",").join(fileds)).append(" from ").append(tableName).append(" ").append(sql.substring(where_position));
+        sqlBuffer.append(fileds).append(" from ").append(tableName).append(" ").append(sql.substring(where_position));
         return sqlBuffer.toString();
     }
 
@@ -54,7 +46,7 @@ public class SQLUtils {
      * @return
      */
     public static boolean isInsertSql(String sql){
-        return sql.startsWith("insert") || sql.startsWith("INSERT");
+        return sql.trim().startsWith("insert") || sql.trim().startsWith("INSERT");
     }
 
     /**
@@ -63,7 +55,7 @@ public class SQLUtils {
      * @return
      */
     public static boolean isUpdateSql(String sql){
-        return sql.startsWith("update") || sql.startsWith("UPDATE");
+        return sql.trim().startsWith("update") || sql.trim().startsWith("UPDATE");
     }
 
     /**
@@ -75,6 +67,24 @@ public class SQLUtils {
         return sql.startsWith("delete") || sql.startsWith("DELETE");
     }
 
+
+    public static String getUpdateFileds(String boundSql){
+
+        if(!isUpdateSql(boundSql))
+            return "";
+
+        int set_position = getSetPosition(boundSql);
+        int where_position = getWherePosition(boundSql);
+        String setStrs = boundSql.substring(set_position + 3,where_position);
+        List<String> strings = Splitter.on(",").splitToList(setStrs);
+        List<String> fileds = Lists.newArrayListWithCapacity(strings.size());
+        for (String s : strings){
+            String filed = Splitter.on("=").splitToList(s).get(0);
+            fileds.add(filed);
+        }
+
+        return Joiner.on(",").join(fileds);
+    }
 
     private static int getUpdatePosition(String sql){
 
@@ -127,6 +137,6 @@ public class SQLUtils {
                 "\t\tWHERE\n" +
                 "\t\t\tid = ";
 
-        System.out.println(getSelectByUpdate(sql));
+        //System.out.println(getSelectByUpdate(sql));
     }
 }

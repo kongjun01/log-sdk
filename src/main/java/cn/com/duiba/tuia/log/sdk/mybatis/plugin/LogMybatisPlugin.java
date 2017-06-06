@@ -44,11 +44,13 @@ public class LogMybatisPlugin implements Interceptor {
                 parameter = invocation.getArgs()[PARAMETER_INDEX];
             }
             //得到执行的sql
-            String executeSql = this.getExecuteSql(mappedStatement.getConfiguration(), mappedStatement.getBoundSql(parameter));
+            BoundSql boundSql = mappedStatement.getBoundSql(parameter);
+            String executeSql = this.getExecuteSql(mappedStatement.getConfiguration(), boundSql);
             executeSql = executeSql.trim();
             if (!SQLUtils.isInsertSql(executeSql)) {
                 //得到查询的sql语句
-                selectSql = this.getSelectSql(executeSql);
+                String updateFileds = SQLUtils.getUpdateFileds(boundSql.getSql());
+                selectSql = this.getSelectSql(executeSql,updateFileds);
                 Executor executor = (Executor) invocation.getTarget();
                 List<Map<String, Object>> resultList = SQLHelp.executeSQL(executor.getTransaction(), selectSql);
                 this.setOrigin(resultList);
@@ -86,10 +88,10 @@ public class LogMybatisPlugin implements Interceptor {
      * @param sql
      * @return
      */
-    private String getSelectSql(String sql) {
+    private String getSelectSql(String sql,String fileds) {
 
         if (SQLUtils.isUpdateSql(sql)) {
-            sql = SQLUtils.getSelectByUpdate(sql);
+            sql = SQLUtils.getSelectByUpdate(sql,fileds);
         }
 
         if (SQLUtils.isDeleteSql(sql)) {
