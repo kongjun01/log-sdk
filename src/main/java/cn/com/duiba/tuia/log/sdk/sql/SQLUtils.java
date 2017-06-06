@@ -37,7 +37,7 @@ public class SQLUtils {
      * @return
      */
     public static String getSelectByDel(String sql){
-        return sql.startsWith("delete") ? sql.replace("delete", "select * ") : sql.replace("DELETE", "select * ");
+        return sql.trim().startsWith("delete") ? sql.replace("delete", "select * ") : sql.trim().replace("DELETE", "select * ");
     }
 
     /**
