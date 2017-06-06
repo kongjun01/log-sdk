@@ -1,5 +1,11 @@
 package cn.com.duiba.tuia.log.sdk.sql;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
 /**
  * @author: <a href="http://www.panaihua.com">panaihua</a>
  * @date: 2017年03月21日 15:12
@@ -16,11 +22,19 @@ public class SQLUtils {
      */
     public static String getSelectByUpdate(String sql) {
 
-        sql = sql.startsWith("update") ? sql.replace("update", "select * from ") : sql.replace("UPDATE", "select * from ");
         int set_position = getSetPosition(sql);
         int where_position = getWherePosition(sql);
-        StringBuffer sqlBuffer = new StringBuffer();
-        sqlBuffer.append(sql.substring(0,set_position -1)).append(" ").append(sql.substring(where_position));
+        StringBuffer sqlBuffer = new StringBuffer("select ");
+        String setStrs = sql.substring(set_position + 3,where_position);
+        List<String> strings = Splitter.on(",").splitToList(setStrs);
+        List<String> fileds = Lists.newArrayListWithCapacity(strings.size());
+        for (String s : strings){
+            String filed = Splitter.on("=").splitToList(s).get(0);
+            fileds.add(filed);
+        }
+
+        String tableName = sql.substring(getUpdatePosition(sql) + 6,set_position -1);
+        sqlBuffer.append(Joiner.on(",").join(fileds)).append(" from ").append(tableName).append(" ").append(sql.substring(where_position));
         return sqlBuffer.toString();
     }
 
@@ -43,10 +57,6 @@ public class SQLUtils {
         return sql.startsWith("insert") || sql.startsWith("INSERT");
     }
 
-    public static void main(String args[]){
-        System.out.println(isInsertSql("delete from aaa"));
-    }
-
     /**
      * 是否是更新语句
      * @param sql
@@ -65,14 +75,25 @@ public class SQLUtils {
         return sql.startsWith("delete") || sql.startsWith("DELETE");
     }
 
-    private static int getWherePosition(String sql){
 
-        int where_position = sql.indexOf("where");
-        if (where_position == -1) {
-            where_position = sql.indexOf("WHERE");
+    private static int getUpdatePosition(String sql){
+
+        int updatePosition = sql.indexOf("update");
+        if (updatePosition == -1) {
+            updatePosition = sql.indexOf("UPDATE");
         }
 
-        return where_position;
+        return updatePosition;
+    }
+
+    private static int getWherePosition(String sql){
+
+        int wherePosition = sql.indexOf("where");
+        if (wherePosition == -1) {
+            wherePosition = sql.indexOf("WHERE");
+        }
+
+        return wherePosition;
     }
 
     private static int getSetPosition(String sql){
@@ -83,5 +104,29 @@ public class SQLUtils {
         }
 
         return set_position;
+    }
+
+    public static void main(String args[]){
+
+        String sql = "UPDATE\n" +
+                "\t\t\tadvert_orientation_package\n" +
+                "\t\tSET\n" +
+                "\t\t\tfee = #{fee},\n" +
+                "\t\t\ta_fee = #{cpaFee},\n" +
+                "\t\t\tcharge_type = #{chargeType},\n" +
+                "\t\t\tplatform = #{platform},\n" +
+                "\t\t\tregion_ids = #{regionIds},\n" +
+                "\t\t\tphone_level = #{phoneLevel},\n" +
+                "\t\t\tdirectional_num = #{directionalNum},\n" +
+                "\t\t\tis_default = #{isDefault},\n" +
+                "\t\t\tnetwork_type = #{networkType},\n" +
+                "\t\t\toperators = #{operators},\n" +
+                "\t\t\tage_region = #{ageRegion},\n" +
+                "\t\t\tsex = #{sex},\n" +
+                "\t\t\tbanned_tag_nums = #{bannedTagNums}\n" +
+                "\t\tWHERE\n" +
+                "\t\t\tid = ";
+
+        System.out.println(getSelectByUpdate(sql));
     }
 }
